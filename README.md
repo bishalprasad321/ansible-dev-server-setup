@@ -11,7 +11,7 @@ NOTE: Ensure the extension provider is trusted from microsoft.
 Having completed the initial step, you now have to get started with the configuration to enable ansible development.
 1. Create a folder for your ansible development. (for e.g. ansible-dev)
 2. Create a `Dockerfile` inside a subfolder called `.devcontainer`. The contents for the dockerfile would be as below :
-```
+```Dockerfile
 # Use Ubuntu as the base image
 FROM ubuntu:20.04
 
@@ -61,7 +61,7 @@ ENV GPG_TTY=$(tty)
 CMD [ "bash" ]
 ```
 3. Create a `devcontainer.json` file inside the same subfolder as your Dockerfile. File content would be as below :
-```
+```JSON
 {
     "name": "Bishal's Ubuntu",
     "dockerFile": "Dockerfile",
