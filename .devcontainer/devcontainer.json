@@ -1,0 +1,24 @@
+{
+    "name": "Bishal's Ubuntu",
+    "dockerFile": "Dockerfile",
+    "runArgs": ["--privileged"],
+
+    "postCreateCommand": "ansible --version && terraform --version && aws --version",
+    "remoteUser": "root",
+    "customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"extensions": [
+				"redhat.ansible",
+				"magicstack.magicpython",
+				"redhat.vscode-yaml",
+				"Tobias-Faller.vt100-syntax-highlighting",
+                "hashicorp.terraform",
+                "pejmannikram.vscode-auto-scroll"
+			]
+		}
+	},
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+    ]
+}
