@@ -87,7 +87,7 @@ CMD [ "bash" ]
     ]
 }
 ```
-4. Having these files, you would be able to use the `Reopen in Devcontainer` option in vscode to automatically open a `public image: Ubuntu` based container inside your vscode with `ansible, aws CLI, and Terraform` installed in it.
+4. Having these files, you would be able to use the `Reopen in Container` option in vscode to automatically open a `public image: Ubuntu` based container inside your vscode with `ansible, aws CLI, and Terraform` installed in it.
 
 NOTE: If you wish, you can alter the contents of the Dockerfile and devcontainer.json according to your needs.
 
