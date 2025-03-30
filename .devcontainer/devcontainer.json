@@ -3,7 +3,7 @@
     "dockerFile": "Dockerfile",
     "runArgs": ["--privileged"],
 
-    "postCreateCommand": "ansible --version && terraform --version && aws --version",
+    "postAttachCommand": "./.devcontainer/postAttach.sh",
     "remoteUser": "root",
     "customizations": {
 		// Configure properties specific to VS Code.
@@ -12,8 +12,10 @@
 				"redhat.ansible",
 				"magicstack.magicpython",
 				"redhat.vscode-yaml",
+                "ms-azuretools.vscode-docker",
 				"Tobias-Faller.vt100-syntax-highlighting",
                 "hashicorp.terraform",
+                "eamodio.gitlens",
                 "pejmannikram.vscode-auto-scroll"
 			]
 		}
