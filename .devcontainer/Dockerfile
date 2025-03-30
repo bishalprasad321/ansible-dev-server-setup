@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     jq \
     make \
+    pass \
     groff \
     python3 \
     python3-pip \
@@ -41,6 +42,14 @@ RUN wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
 RUN python3 -m pip install --upgrade pip \
     && pip3 install --ignore-installed pyYAML \
     && pip3 install ansible ansible_runner ansible-lint psycopg2-binary
+
+# fetch and extract gossamer3
+RUN export CURRENT_VERSION=$(curl --silent "https://api.github.com/repos/GESkunkworks/gossamer3/releases/latest" | jq -r .tag_name | sed 's/v//') \
+    && wget https://github.com/GESkunkworks/gossamer3/releases/download/v${CURRENT_VERSION}/gossamer3_${CURRENT_VERSION}_linux_amd64.tar.gz \
+    && tar -xzvf gossamer3_${CURRENT_VERSION}_linux_amd64.tar.gz -C /usr/local/bin
+
+RUN chmod u+x /usr/local/bin/gossamer3
+RUN bash
 
 # Set GPG environment variable
 ENV GPG_TTY=$(tty)
