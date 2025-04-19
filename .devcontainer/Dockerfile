@@ -1,11 +1,8 @@
 # Use Ubuntu as the base image
-FROM ubuntu:20.04
+FROM ubuntu:latest
 
 # Set environment variables to avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Set working directory
-WORKDIR /root
 
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
@@ -20,7 +17,6 @@ RUN apt-get update && apt-get install -y \
     groff \
     python3 \
     python3-pip \
-    ansible \
     findutils \
     tar \
     xz-utils \
@@ -39,9 +35,9 @@ RUN wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip \
     && ./aws/install
 
 # Install Ansible, Ansible Runner, and Ansible Lint
-RUN python3 -m pip install --upgrade pip \
-    && pip3 install --ignore-installed pyYAML \
-    && pip3 install ansible ansible_runner ansible-lint psycopg2-binary
+RUN python3 -m pip install --break-system-packages --ignore-installed pyYAML \
+    && python3 -m pip install --break-system-packages ansible ansible_runner ansible-lint psycopg2-binary
+
 
 # fetch and extract gossamer3
 RUN export CURRENT_VERSION=$(curl --silent "https://api.github.com/repos/GESkunkworks/gossamer3/releases/latest" | jq -r .tag_name | sed 's/v//') \
@@ -55,3 +51,6 @@ RUN bash
 ENV GPG_TTY=$(tty)
 
 CMD [ "bash" ]
+
+# Refactor the devcontainer terminal
+RUN echo 'export PS1="\u@\h:\W# "' >> ~/.bashrc
