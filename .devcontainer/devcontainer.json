@@ -5,6 +5,17 @@
 
     "postAttachCommand": "./.devcontainer/postAttach.sh",
     "remoteUser": "root",
+    "remoteEnv": {
+        //Ansible specs
+        "ANSIBLE_GALAXY_COLLECTION_SKELETON": "/root/.ansible/collections/ansible_collections/ansible/common/collection_skeleton",
+        "ANSIBLE_GALAXY_ROLE_SKELETON": "/root/.ansible/collections/ansible_collections/ansible/common/roles/role_skeleton",
+        "ANSIBLE_ENABLE_TASK_DEBUGGER": "True",
+        "ANSIBLE_VERBOSITY": "0",
+        "ANSIBLE_STDOUT_CALLBACK": "yaml",
+        "ANSIBLE_CALLBACKS_ENABLED": "ansible.posix.timer, ansible.posix.profile_tasks",
+        "PROFILE_TASKS_TASK_OUTPUT_LIMIT": "30",
+        "ANSIBLE_HOST_KEY_CHECKING": "False"
+    },
     "customizations": {
 		// Configure properties specific to VS Code.
 		"vscode": {

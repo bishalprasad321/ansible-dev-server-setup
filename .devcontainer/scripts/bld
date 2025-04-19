@@ -1,0 +1,88 @@
+#!/bin/bash
+# The purpose of the bld shell script is to provide a command that will
+# install and build one or more Ansible Collections.
+# If used with no flag, it will install and build the Ansible Collection in
+# which the working directory resides. If used with the 'all' flag, it will
+# also build all other Ansible Collections that it finds adjacent to the
+# current one.
+# An Ansible Collection is identified by the presence of a galaxy.yml file.
+# The script will error if no galaxy.yml file is found in the directories that
+# are ancestral to the working directory.
+# Optionally, you can pass a verbosity to this script, which should be set as
+# an integer between 0 and 5 - e.g. 'bld 3' or 'bld all 1'.
+# If no verbosity is given, the ANSIBLE_VERBOSITY env var / config will apply.
+
+# Provide a standard way of exiting on error
+die() {
+    echo >&2 "$1"
+    exit $2
+}
+
+# Check that any parameters make sense
+[ $# -le 2 ] || die "0, 1 or 2 arguments required, yet $# were provided" 1
+verbosity=""
+build_all=false
+for var in "$@"
+do
+  if [ "$var" == "all" ]
+  then
+    build_all=true
+  elif [[ "$var" =~ ^[0-5]$ ]]
+  then
+    verbosity="-$(printf "v%.0s" $(seq 1 $var))"
+  else
+    die "script parameters, if given, must be 'all' and/or an integer 0-5" 2
+  fi
+done
+
+# Get the directory for any collection to which this role belongs
+working_dir=$(pwd)
+search_dir="$working_dir"
+while [ "`ls ""$search_dir"" | grep -i '^galaxy.yml$' | wc -l`" -eq 0 ]; do
+  search_dir=$(dirname "$search_dir")
+  [ $search_dir == "/" ] && break
+done
+
+if [ $search_dir == "/" ] && [ $build_all ]
+then
+  # assume we may already be in a parent directory of collections to build
+  parent_dir="$working_dir"
+fi
+
+declare -a collections
+if [ $search_dir != "/" ] || [ $parent_dir != "" ]
+then
+  # collection directory was found or we are looking for collections beneath
+  if $build_all
+  then
+    # Search for any collections living in sibling dirs of this collection
+    if [ ! $parent_dir ]
+    then
+      parent_dir=$(dirname "$search_dir")
+    fi
+    for d in $parent_dir/*/
+    do
+      [ -L "${d%/}" ] && continue # exclude symlinks
+      if [ "`ls ""$d"" | grep -i '^galaxy.yml$' | wc -l`" -ne 0 ]
+      then
+        collections[i]="$d"
+        i+=1
+      fi
+    done
+  elif [ $search_dir != "/" ]
+  then
+    collections[0]="$search_dir"
+  fi
+
+  for c in ${collections[@]}; do
+    # Build the current collection
+    printf "\nBuilding Ansible Collection under $c...\n"
+    ansible-galaxy collection build "$c" --force --output-path=/tmp | tee /tmp/build.out
+    [ $? -eq 0 ] || die "An error has occured while building the collection $c" 3
+
+    # (Re)install the current collection
+    file_name=$(awk 'END{print $NF}' /tmp/build.out)
+    ansible-galaxy collection install "$file_name" --force-with-deps $verbosity
+    [ $? -eq 0 ] || die "An error has occured while installing the collection $c" 4
+  done
+fi

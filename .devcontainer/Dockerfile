@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \
+    bash \
     curl \
     git \
     unzip \
