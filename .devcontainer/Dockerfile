@@ -5,6 +5,7 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
+# Install necessary dependencies
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     curl \
@@ -20,8 +21,15 @@ RUN apt-get update && apt-get install -y \
     findutils \
     tar \
     xz-utils \
+    locales \
+    && locale-gen en_US.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Set locale environment variables
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8
 
 # Install Terraform
 RUN export TERRAFORM_VERSION=$(curl --silent "https://checkpoint-api.hashicorp.com/v1/check/terraform" | jq --raw-output ".current_version") \
